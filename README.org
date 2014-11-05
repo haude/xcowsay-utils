@@ -1,0 +1,21 @@
+* xcowsay-utils
+
+** 1. What is it?
+
+  It's yet another *haude-utils*. Wraps the *xcowsay* command to your
+  will.
+
+** 2. How to Start.
+
+*** 2.1 Bootstrap
+
+  The extra **faces** (pics) are not included in =code= [master]
+  branch you can check the =dump= *branch*.
+
+  Or download separately from [[https://github.com/haude/xcowsay-utils/releases][releases]]
+
+
+*** 2.1 Using *cron* jobs
+  #+BEGIN_SRC bash
+  */20 * * * * DISPLAY=:0.0 path/to/xcowsay-utils/main.sh
+  #+END_SRC
