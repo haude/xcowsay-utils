@@ -1,0 +1,8 @@
+* faces
+
+faces for the *xcowsay*, the alternate do the *cow*!
+
+The extra **faces** (pics) are not included in =code= [master]
+branch you can check the =dump= *branch*.
+
+Or download separately from [[https://github.com/haude/xcowsay-utils/releases][releases]]
