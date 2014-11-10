@@ -1,17 +1,6 @@
 #!/bin/bash
 
-WD="$(dirname $0)"
-
-function Usage {
-    echo "takes all the arguments of xcowsay"
-    echo "when the no argument is given the it will use the fortune to say something"
-    echo -e "Usage:  xcowsay-utils [OPTIONS]";
-    echo -e "\t-i | --image\tchoose image"
-    echo -e "\t-d | --dir\tchoose image directory"
-    echo -e "\t-r | --random\tto be use with -d for random effect"
-    echo -e "\t-c | --credits\tDisplay the Credits"
-    echo -e "\t-h | --help\tDisplay this message"
-}
+WD="$(dirname $(readlink $0 || echo $0))"
 
 function Credits {
     h1="^[[1;32m"
@@ -26,7 +15,6 @@ function random {
 	echo $number
 }
 
-
 function Directory {
     MESSAGES_PATH="$WD/$1"
     >&2 echo MESSAGES_PATH = \"$MESSAGES_PATH\"
@@ -35,8 +23,19 @@ function Directory {
     echo ${MSG_LIST[$rand]}
 }
 
-TEMP=$(getopt -o id:rch\
-              -l image,dir:,random,credits,help\
+function Usage {
+    echo "takes all the arguments of xcowsay"
+    echo "when the no argument is given the it will use the fortune to say something"
+    echo -e "Usage:  xcowsay-utils [OPTIONS]";
+    echo -e "\t-a | --again\tshow again recently show"
+    echo -e "\t-d | --dir\tchoose image directory"
+    echo -e "\t-r | --random\tto be use with -d for random effect"
+    echo -e "\t-c | --credits\tDisplay the Credits"
+    echo -e "\t-h | --help\tDisplay this message"
+}
+
+TEMP=$(getopt -o aid:rmch\
+              -l again,image,dir:,random,memory,credits,help\
               -n "xcowsay-utils"\
               -- "$@")
 
@@ -45,14 +44,12 @@ if [ $? != "0" ]; then exit 1; fi
 
 eval set -- "$TEMP"
 
+mem=0
 while true; do
     case $1 in
-        # -i|--image)      dis=1; shift;;
+        -a|--again)      $(cat /tmp/xcowsay-utils); exit;;
         -d|--dir)        shift; img_file=" -d $(Directory $1) "; shift;;
-        # -w|--week)       dis=0; shift;;
-        # -t|--today)      dis=3; shift;;
-        # -u|--update)     update; exit;;
-        # -x|--xml)        xml_dump; exit;;
+        -m|--memory)     mem=1; shift;;
         -c|--credits)    Credits; exit;;
         -h|--help)       Usage; exit;;
         --)              shift; break;;
@@ -83,4 +80,10 @@ if [[ "$extra_args" == "" && "$img_file" == "" ]]; then
     msg=$(fortune)
 fi
 
-xcowsay --image=${IMG_LIST[$r]} $extra_args $img_file $msg
+if [[ "$mem" == 0 ]]; then
+    xcowsay --image=${IMG_LIST[$r]} $extra_args $img_file $msg
+    exit 0
+fi
+
+echo xcowsay --image=${IMG_LIST[$r]} $extra_args $img_file $msg > /tmp/xcowsay-utils
+$(cat /tmp/xcowsay-utils)

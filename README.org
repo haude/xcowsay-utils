@@ -7,15 +7,31 @@
 
 ** 2. How to Start.
 
-*** 2.1 Bootstrap
+*** 2.1 Getting it
 
-  The extra **faces** (pics) are not included in =code= [master]
+  The extra *faces* (pics) are not included in =code= [master]
   branch you can check the =dump= *branch*.
 
   Or download separately from [[https://github.com/haude/xcowsay-utils/releases][releases]]
 
+***** TL;DR
 
-*** 2.1 Using *cron* jobs
   #+BEGIN_SRC bash
-  */20 * * * * DISPLAY=:0.0 path/to/xcowsay-utils/main.sh
+  git clone https://github.com/haude/xcowsay-utils /path/to/destination
+  cd /path/to/destination
+  wget https://github.com/haude/xcowsay-utils/archive/faces-data-1.0.tar.gz
+  tar -zxvf faces-data-1.0.tar.gz
+  #+END_SRC
+
+*** 2.2 Bootstrap
+
+**** 2.2.1 Make accessible
+  Add the symlink to =/usr/local/bin/= for commandline execution.
+  #+BEGIN_SRC bash
+  ls -n /path/to/xcowsay-utils/main.sh /usr/local/bin/xcowsay-utils
+  #+END_SRC
+
+**** 2.2.2 Using *cron* jobs
+  #+BEGIN_SRC bash
+  */20 * * * * DISPLAY=:0.0 /path/to/xcowsay-utils/main.sh
   #+END_SRC
