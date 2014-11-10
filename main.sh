@@ -81,9 +81,9 @@ if [[ "$extra_args" == "" && "$img_file" == "" ]]; then
 fi
 
 if [[ "$mem" == 0 ]]; then
-    xcowsay --image=${IMG_LIST[$r]} $extra_args $img_file $msg
+    xcowsay --image=${IMG_LIST[$r]} $extra_args $img_file "$msg"
     exit 0
 fi
 
-echo xcowsay --image=${IMG_LIST[$r]} $extra_args $img_file $msg > /tmp/xcowsay-utils
+echo xcowsay --image=${IMG_LIST[$r]} $extra_args $img_file \"$msg\" > /tmp/xcowsay-utils
 $(cat /tmp/xcowsay-utils)
