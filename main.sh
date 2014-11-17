@@ -3,8 +3,8 @@
 WD="$(dirname $(readlink $0 || echo $0))"
 
 function Credits {
-    h1="^[[1;32m"
-    cdef="^[[0;0m"
+    h1="\033[1;32m"
+    cdef="\033[0;0m"
     sed 's/^#.*/'`echo -e $h1`'&'`echo -e $cdef`'/' $WD/AUTHORS
     echo
 }
