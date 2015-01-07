@@ -24,18 +24,17 @@ function Directory {
 }
 
 function Usage {
-    echo "takes all the arguments of xcowsay"
-    echo "when the no argument is given the it will use the fortune to say something"
+    echo "Takes all the arguments of xcowsay"
     echo -e "Usage:  xcowsay-utils [OPTIONS]";
     echo -e "\t-a | --again\tshow again recently show"
     echo -e "\t-d | --dir\tchoose image directory"
-    echo -e "\t-r | --random\tto be use with -d for random effect"
-    echo -e "\t-c | --credits\tDisplay the Credits"
-    echo -e "\t-h | --help\tDisplay this message"
+    echo -e "\t-i | --inhibit\tdisable when buzy [touch /tmp/present]"
+    echo -e "\t-c | --credits\tdisplay the credits"
+    echo -e "\t-h | --help\tdisplay this message"
 }
 
 TEMP=$(getopt -o aid:rmch\
-              -l again,image,dir:,random,memory,credits,help\
+              -l again,inhibit,dir:,random,memory,credits,help\
               -n "xcowsay-utils"\
               -- "$@")
 
@@ -50,6 +49,7 @@ while true; do
         -a|--again)      $(cat /tmp/xcowsay-utils); exit;;
         -d|--dir)        shift; img_file=" -d $(Directory $1) "; shift;;
         -m|--memory)     mem=1; shift;;
+        -i|--inhibit)    [ -e /tmp/present ] && exit; shift;;
         -c|--credits)    Credits; exit;;
         -h|--help)       Usage; exit;;
         --)              shift; break;;
