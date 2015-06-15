@@ -16,46 +16,65 @@ function random {
 }
 
 function Directory {
-    MESSAGES_PATH="$WD/$1"
+    MESSAGES_PATH="$WD/pkg/$1"
     >&2 echo MESSAGES_PATH = \"$MESSAGES_PATH\"
     MSG_LIST=($MESSAGES_PATH/*.png)
     rand=$(random `echo ${#MSG_LIST[@]}`)
     echo ${MSG_LIST[$rand]}
 }
 
+function inhibit {
+    [ -e /tmp/present ] && exit
+    >&3 which xfconf-query && {
+        state=$(xfconf-query -c xfce4-power-manager -p /xfce4-power-manager/presentation-mode)
+    }
+    >&3 echo STATE = $state
+    [ $state == 'true' ] && exit
+}
+
 function Usage {
     echo "Takes all the arguments of xcowsay"
     echo -e "Usage:  xcowsay-utils [OPTIONS]";
-    echo -e "\t-a | --again\tshow again recently show"
-    echo -e "\t-d | --dir\tchoose image directory"
-    echo -e "\t-i | --inhibit\tdisable when buzy [touch /tmp/present]"
-    echo -e "\t-c | --credits\tdisplay the credits"
-    echo -e "\t-h | --help\tdisplay this message"
+    echo -e "\t-a | --again           Show again recently say"
+    echo -e "\t-l | --pkglst          List package"
+    echo -e "\t-p | --pkg [pkg-name]  Choose package"
+    echo -e "\t-m | --mem             needed before using again"
+    echo -e "\t-i | --inhibit         Disable when buzy (/tmp/present or xfce4)"
+    echo -e "\t-c | --credits         Show credits"
+    echo -e "\t-v | --verbose         Increase verbosity"
+    echo -e "\t-h | --help            Display this message"
 }
 
-TEMP=$(getopt -o aid:rmch\
-              -l again,inhibit,dir:,random,memory,credits,help\
+# TODO: don't use getopt it blocks xcowsay command
+GETOPT=$(getopt -o aip:lrmcvh\
+              -l again,inhibit,pkg:,pkglstrandom,memory,credits,vebose,help\
               -n "xcowsay-utils"\
               -- "$@")
 
 # TODO: fix this error check to getopt
 if [ $? != "0" ]; then exit 1; fi
 
-eval set -- "$TEMP"
+eval set -- "$GETOPT"
 
 mem=0
+VV=2
+exec 3> /dev/null
+exec 4> /dev/null
 while true; do
     case $1 in
         -a|--again)      $(cat /tmp/xcowsay-utils); exit;;
-        -d|--dir)        shift; img_file=" -d $(Directory $1) "; shift;;
+        -p|--pkg)        shift; img_file=" -d $(Directory $1) "; shift;;
+        -l|--pkglst)     ls -1 "$WD/pkg"; exit;;
         -m|--memory)     mem=1; shift;;
-        -i|--inhibit)    [ -e /tmp/present ] && exit; shift;;
+        -i|--inhibit)    inhibit; shift;;
         -c|--credits)    Credits; exit;;
+        -v|--verbose)    let VV++; eval "exec $VV>&2"; shift;;
         -h|--help)       Usage; exit;;
         --)              shift; break;;
     esac
 done
 
+>&3 echo $WD
 # extra argument
 for arg do
     extra_args+=" $arg"
