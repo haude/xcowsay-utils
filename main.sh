@@ -27,13 +27,16 @@ function pkg_handle {
     if [[ -e "$MESSAGES_PATH/${pkg[1]}.png" ]]; then
         echo " -d $MESSAGES_PATH/${pkg[1]}.png "
         return
-    else
-        >&2 echo 'Randomizing...'
+    elif [[ ${pkg[1]} != "" ]]; then
+        echo "${pkg[1]} Not found"
+        return
     fi
 
-    >&2 echo MESSAGES_PATH = \"$MESSAGES_PATH\"
+
+    >&2 echo 'Randomizing...'
     MSG_LIST=($MESSAGES_PATH/*.png)
     rand=$(random `echo ${#MSG_LIST[@]}`)
+    >&2 echo "${MSG_LIST[$rand]}"
     echo " -d ${MSG_LIST[$rand]} "
 }
 
