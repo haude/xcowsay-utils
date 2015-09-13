@@ -15,12 +15,26 @@ function random {
 	echo $number
 }
 
-function Directory {
-    MESSAGES_PATH="$WD/pkg/$1"
+function pkg_handle {
+    # put dot as separator
+    pkg=(${1/./ })
+    MESSAGES_PATH="$WD/pkg/${pkg[0]}"
+    test -d "$MESSAGES_PATH" || {
+        >&2 echo 'Package Error'
+        return
+    }
+
+    if [[ -e "$MESSAGES_PATH/${pkg[1]}.png" ]]; then
+        echo " -d $MESSAGES_PATH/${pkg[1]}.png "
+        return
+    else
+        >&2 echo 'Randomizing...'
+    fi
+
     >&2 echo MESSAGES_PATH = \"$MESSAGES_PATH\"
     MSG_LIST=($MESSAGES_PATH/*.png)
     rand=$(random `echo ${#MSG_LIST[@]}`)
-    echo ${MSG_LIST[$rand]}
+    echo " -d ${MSG_LIST[$rand]} "
 }
 
 function inhibit {
@@ -37,7 +51,7 @@ function Usage {
     echo -e "Usage:  xcowsay-utils [OPTIONS]";
     echo -e "\t-a | --again           Show again recently say"
     echo -e "\t-l | --pkglst          List package"
-    echo -e "\t-p | --pkg [pkg-name]  Choose package"
+    echo -e "\t-p | --pkg [pkg.file]  use package and specify file"
     echo -e "\t-m | --mem             needed before using again"
     echo -e "\t-i | --inhibit         Disable when buzy (/tmp/present or xfce4)"
     echo -e "\t-c | --credits         Show credits"
@@ -63,7 +77,7 @@ exec 4> /dev/null
 while true; do
     case $1 in
         -a|--again)      $(cat /tmp/xcowsay-utils); exit;;
-        -p|--pkg)        shift; img_file=" -d $(Directory $1) "; shift;;
+        -p|--pkg)        shift; img_file="$(pkg_handle $1)"; shift;;
         -l|--pkglst)     ls -1 "$WD/pkg"; exit;;
         -m|--memory)     mem=1; shift;;
         -i|--inhibit)    inhibit; shift;;
