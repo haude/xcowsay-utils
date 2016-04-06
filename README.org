@@ -28,7 +28,7 @@
 **** 2.2.1 Make accessible
   Add the symlink to =/usr/local/bin/= for commandline execution.
   #+BEGIN_SRC bash
-  ls -n /path/to/xcowsay-utils/main.sh /usr/local/bin/xcowsay-utils
+  ln -s /path/to/xcowsay-utils/main.sh /usr/local/bin/xcowsay-utils
   #+END_SRC
 
 **** 2.2.2 Using *cron* jobs
