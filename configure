@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -e
+
+wget https://github.com/haude/xcowsay-utils/archive/faces-data-1.0.tar.gz
+
+rm -f faces-data-1.0.tar.gz
+echo "Downloading faces"
+wget https://github.com/haude/xcowsay-utils/archive/faces-data-1.0.tar.gz
+tar xvzf faces-data-1.0.tar.gz
+rm -rf faces
+mv xcowsay-utils-faces-data-1.0 faces
