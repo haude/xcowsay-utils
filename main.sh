@@ -79,7 +79,7 @@ exec 3> /dev/null
 exec 4> /dev/null
 while true; do
     case $1 in
-        -a|--again)      $(cat /tmp/xcowsay-utils); exit;;
+        -a|--again)      $(2>/dev/null cat /tmp/xcowsay-utils) || Usage; exit;;
         -p|--pkg)        shift; img_file="$(pkg_handle $1)"; shift;;
         -l|--pkglst)     ls -1 "$WD/pkg"; exit;;
         -m|--memory)     mem=1; shift;;
