@@ -1,0 +1,32 @@
+FROM archlinux:latest
+
+#install xcowsay-deps
+#    depends=('dbus' 'dbus-glib' 'cairo' 'gtk2')
+ENV XCOWSAY_DEPS="dbus dbus-glib mesa-libgl cairo gtk2"
+ENV BUILD_DEPS="pkg-config make gcc"
+ENV PACMAN_SYNTAX='pacman --noconfirm'
+
+ENV PKG_NAME="xcowsay"
+ENV PKG_VERSION="1.3"
+ENV PKG_SOURCE="http://www.nickg.me.uk/files/$PKG_NAME-$PKG_VERSION.tar.gz"
+ENV PKG_TMPDIR="/tmp"
+ENV PKG_CONFIGURE_OPTS="--prefix=/usr -enable-dbus"
+
+#mounting the cache is helpful
+MOUNT /var/cache/pacman/pkg:/var/cache/pacman/pkg
+RUN $PACMAN_SYNTAX -Syy
+RUN $PACMAN_SYNTAX -S $XCOWSAY_DEPS $BUILD_DEPS
+
+#collect the source, deflat and install
+RUN curl $PKG_SOURCE -o $PKG_TMPDIR/$PKG_NAME.tar.gz
+RUN tar -xf $PKG_TMPDIR/$PKG_NAME.tar.gz -C $PKG_TMPDIR
+RUN cd $PKG_TMPDIR/$PKG_NAME-$PKG_VERSION && ./configure $PKG_CONFIGURE_OPTS && make && make install
+
+RUN $PACMAN_SYNTAX -Rns $XCOWSAY $BUILD_DEPS
+# MOUNT /tmp/.X11-unix:/tmp/.X11-unix
+# RUN sleep 30m
+
+# Autorun xcowsay
+ENTRYPOINT ["xcowsay"]
+TAG archlinux/xcowsay
+# CMD /usr/sbin/xcowsay
